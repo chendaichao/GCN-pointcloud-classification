@@ -11,7 +11,7 @@ save_name = "PointNetGCN.pt"
 
 ########### loading data ###########
 
-num_points = 1024
+num_points = 512
 test_data = ModelNet40(num_points, 'test')
 
 print("test data size: ", len(test_data))
