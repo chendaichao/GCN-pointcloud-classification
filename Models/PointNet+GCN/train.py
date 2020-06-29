@@ -11,7 +11,7 @@ save_name = "PointNetGCN.pt"
 
 ########### loading data ###########
 
-num_points = 1024
+num_points = 512
 train_data = ModelNet40(num_points)
 test_data = ModelNet40(num_points, 'test')
 
