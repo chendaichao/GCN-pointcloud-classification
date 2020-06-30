@@ -12,7 +12,7 @@ To incorporate graph convolutional  networks, I replace the *MLP(64, 128, 1024)*
 
 ## Implementation
 
-We implement both models in *pytorch* with codes stored in `Models/PointNet/` and `Models/PointNet+GCN`, respectively. The dataset classes in `Models/*/data.py` are modified from https://github.com/WangYueFt/dgcnn/blob/master/pytorch/data.py. The pytorch implementation for GCN ( `Models/PointNet+GCN/layers.py` and the class `GCN` in`Models/PointNet+GCN/models.py`) is taken from from https://github.com/tkipf/pygcn/blob/master/pygcn/layer.py. 
+We implement both models in *pytorch* with codes stored in `Models/PointNet/` and `Models/PointNet+GCN`, respectively. The dataset classes in `Models/*/data.py` are modified from https://github.com/WangYueFt/dgcnn/blob/master/pytorch/data.py. The pytorch implementation for GCN ( `Models/PointNet+GCN/layers.py` and the class `GCN` in`Models/PointNet+GCN/models.py`) are taken from https://github.com/tkipf/pygcn/blob/master/pygcn/layer.py. 
 
 Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix is added to the total loss. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. The number of sampling points of  PointNet and PointNet with GCN is chosen to be 1024 and 512 respectively. 
 
