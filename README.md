@@ -4,17 +4,17 @@ This is a project using PointNet and GCNs for pointcloud classification. We impl
 
 ## Model Description
 
-This is an illustration of PointNet, taken from Figure 2 in [1]. The max-pooling operation aggregates the local feature from each point and ensures permutation invariance. The T-Nets are mini version of PointNet, consisting of a shared $MLP(64, 128, 1024)$, a max-pooling operator and a $MLP(512, 256, k^2)$, which regress the $n\times k$ input to a $k\times k$ transform. 
+This is an illustration of PointNet, taken from Figure 2 in [1]. The max-pooling operation aggregates the local feature from each point and ensures permutation invariance. The T-Nets are mini version of PointNet, consisting of a shared *MLP(64, 128, 1024)*, a max-pooling operator and a *MLP(512, 256, k×k)*, which regress the *n×k* input to a *k×k* transform. 
 
 ![illustration for PointNet](figure.png)
 
-To incorporate graph convolutional  networks, I replace the $MLP(64, 128, 1024)$s in the main PointNet and the two TNets with a fully connected layer followed by a $GCN(128, 1024)$. Hopefully the modification will endow the network with more capacity to capture structural information, and thus result in better performances.
+To incorporate graph convolutional  networks, I replace the *MLP(64, 128, 1024)* s in the main PointNet and the two TNets with a fully connected layer followed by a *GCN(128, 1024)*. Hopefully the modification will endow the network with more capacity to capture structural information, and thus result in better performances.
 
 ## Implementation
 
 We implement both models in *pytorch* with codes stored in `Models/PointNet/` and `Models/PointNet+GCN`, respectively. The dataset classes in `Models/*/data.py` are modified from https://github.com/WangYueFt/dgcnn/blob/master/pytorch/data.py. The pytorch implementation for GCN ( `Models/PointNet+GCN/layers.py` and the class `GCN` in`Models/PointNet+GCN/models.py`) is taken from from https://github.com/tkipf/pygcn/blob/master/pygcn/layer.py. 
 
-Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. The number of sampling points of  PointNet and PointNet with GCN is chosen to be 1024 and 512 respectively. 
+Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix is added to the total loss. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. The number of sampling points of  PointNet and PointNet with GCN is chosen to be 1024 and 512 respectively. 
 
 **Results.** The overall accuracy over 40 classes of PointNet is 89.0600%, comparable to the results in [1]. Unfortunately, the accuracy of PointNet with GCN is 84.8055%. We are still figuring out why there's a performance gap.
 
