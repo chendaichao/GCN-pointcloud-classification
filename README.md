@@ -59,7 +59,7 @@ for testing the trained model (loaded from `PointNet.pt` or `PointNetGCN.pt`).
 If you want to use our pretrained models, please download them from the following links:
 
 - PointNet: https://drive.google.com/file/d/1cQiMU0FQ4idQSMNSpFFf8SkhGcHbNG6e/view?usp=sharing
-- PointNet with GCNs: (*I would upload it later...*)
+- PointNet with GCNs: https://drive.google.com/file/d/1VzGZhgBN0OTm-LOX2TC8nSU4SG18F168/view?usp=sharing
 
 Please save the `*.pt`  files in `Models/"PointNet"` and `Models/"PointNet+GCN"`, and rename them as `PointNet.pt` and `PointNetGCN.pt`, respectively.
 
