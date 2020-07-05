@@ -57,12 +57,6 @@ def translate_pointcloud(pointcloud):
     translated_pointcloud = np.add(np.multiply(pointcloud, xyz1), xyz2).astype('float32')
     return translated_pointcloud
 
-
-def jitter_pointcloud(pointcloud, sigma=0.01, clip=0.02):
-    N, C = pointcloud.shape
-    pointcloud += np.clip(sigma * np.random.randn(N, C), -1*clip, clip)
-    return pointcloud
-
 def pointcloud2graph(pointcloud, all_edges, threshold = 0.11):
     N = all_edges.shape[0]
     dist = pointcloud.repeat((N, 1, 1))
@@ -95,9 +89,7 @@ class ModelNet40(Dataset):
         pointcloud = self.data[item][:self.num_points]
         label = self.label[item]
         if self.partition == 'train':
-            # pointcloud = jitter_pointcloud(translate_pointcloud(pointcloud))
             pointcloud = translate_pointcloud(pointcloud)
-            np.random.shuffle(pointcloud)
         pointcloud = torch.from_numpy(pointcloud)
         return pointcloud, pointcloud2graph(pointcloud, self.all_edges), torch.from_numpy(label)
 
