@@ -7,11 +7,19 @@ from data import ModelNet40
 from model import *
 from utils import *
 
-save_name = "PointNetGCN.pt"
+import argparse
+parser = argparse.ArgumentParser(description='Training PointNet.')
+parser.add_argument('-n', '--num_points', type=int, default = 512,
+                    help="The number of points sampled from the pointcloud.")
+parser.add_argument('-m', '--model', type=str, default = "PointNetGCN.pt",
+                    help="The file in which the trained model will be saved.")
+args = parser.parse_args()
+
+save_name = args.model
 
 ########### loading data ###########
 
-num_points = 512
+num_points = args.num_points
 test_data = ModelNet40(num_points, 'test')
 
 print("test data size: ", len(test_data))
@@ -47,9 +55,3 @@ net.load_state_dict(checkpoint["net"])
 loss_func = torch.nn.NLLLoss()
 loss, acc = evaluate_model(test_iter, net, loss_func)
 print('test loss = %.6f,  test acc = %.6f' % (loss, acc))
-
-
-
-
-
-
