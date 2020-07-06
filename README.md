@@ -18,7 +18,7 @@ We implement both models in *pytorch*. Codes are stored in `Models/PointNet/` an
 
 Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix is added to the total loss. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. The number of points sampled from the pointcloud is chosen to be 2048 for PointNet and 512 for the GCN version (since constructing the graph is really inefficient when *#points* is large). 
 
-**Results.** The overall accuracy over 40 classes of PointNet is 89.14100%, comparable to the results given by [1] (89.2%). Unfortunately, the accuracy of our GCN version is 87.7229%, acceptable but slightly worser than the former one. The reasons may be twofold. First, the GCN version of PointNet uses only 512 points. Second, the graph structure along with the edge weights processed by a graph convolutional network is fixed, which may limit the model's representation power for complex features.
+**Results.** The overall accuracy over 40 classes of PointNet is 89.14100%, comparable to the results given by [1] (89.2%). Unfortunately, the accuracy of our GCN version is 87.7229%, acceptable but slightly worser than the former one. We think the reasons may be twofold. First, the GCN version of PointNet uses only 512 points. Second, the graph structure along with the edge weights processed by a graph convolutional network is fixed, which may limit the model's representation power for complex features.
 
 ## How to Use
 
@@ -37,11 +37,11 @@ cd Models/"PointNet+GCN"
 Run
 
 ```shell
-python train.py -lr=0.001 --num_points=2048 --model="PointNet.pt"
+python train.py -lr=1e-3 --num_points=2048 --model="PointNet.pt"
 ```
 
 ```shell
-python train.py -lr=0.001 --num_points=512 --model="PointNetGCN.pt"
+python train.py -lr=1e-3 --num_points=512 --model="PointNetGCN.pt"
 ```
 
 for training. The ModelNet40 dataset will be automatically downloaded (you can also download it manually from https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip , and unzip the file to `./Datasets/` directory). 
