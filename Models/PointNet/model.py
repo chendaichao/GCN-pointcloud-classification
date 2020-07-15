@@ -2,7 +2,32 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from collections import OrderedDict
+from layers import GraphConvolution
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+class GCN(nn.Module):
+    def __init__(self, n_in, n_hid, n_out, dropout=0):
+        super(GCN, self).__init__()
+
+        self.gc1 = GraphConvolution(n_in, n_hid)
+        self.gc2 = GraphConvolution(n_hid, n_out)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(self, xs, adjs = None):
+        if (adjs is None):
+            xs, adjs = xs
+        
+        num_points = xs.shape[1]
+        
+        xs = torch.cat(tuple(xs), dim=0)
+        xs = xs.to(device)
+        adjs = adjs.to(device)
+        res = F.relu(self.gc1(xs, adjs))
+        res = F.relu(self.gc2(res, adjs))
+        res = self.dropout(res)
+        ys = torch.stack(torch.split(res, num_points, dim=0)).to(device)
+        return ys
 
 class MaxPooling(nn.Module):
     def __init__(self):
@@ -44,7 +69,7 @@ class MLP(nn.Module):
             in_dim = hidden_size[i]
             out_dim = hidden_size[i+1]
             q.append(("Linear_%d" % i, nn.Linear(in_dim, out_dim)))
-            if (i == len(hidden_size) - 2) and (last_activation):
+            if (i < len(hidden_size) - 2) or ((i == len(hidden_size) - 2) and (last_activation)):
                 if (batchnorm):
                     q.append(("Batchnorm_%d" % i, BatchNorm(out_dim)))
                 q.append(("ReLU_%d" % i, nn.ReLU(inplace=True)))
