@@ -57,6 +57,10 @@ lr  = args.learning_rate
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, net.parameters()), lr=lr, weight_decay = 0.0001)
 loss = nn.NLLLoss()
 
+def adjust_lr(optimizer, decay_rate=0.95):
+    for param_group in optimizer.param_groups:
+        param_group['lr'] *= decay_rate
+
 retrain = True
 if os.path.exists(save_name):
     print("Model parameters have already been trained before. Retrain ? (y/n)")
@@ -69,10 +73,16 @@ if os.path.exists(save_name):
             g['lr'] = lr
         
 train_model(train_iter, valid_iter, net, loss, optimizer, device = device, max_epochs = 1000, 
-            early_stop = EarlyStop(patience = 20, save_name = save_name))
+            adjust_lr = adjust_lr, early_stop = EarlyStop(patience = 20, save_name = save_name))
     
 
 ############### testing ##########################
 
 loss, acc = evaluate_model(test_iter, net, loss)
 print('test acc = %.6f' % (acc))
+
+
+
+
+
+

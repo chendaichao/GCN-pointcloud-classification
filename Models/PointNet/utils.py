@@ -70,7 +70,8 @@ def evaluate_model(data_iter, net, loss, device = device):
         net.train() 
     return loss_sum / n, acc_sum / n
 
-def train_model(train_iter, valid_iter, net, loss, optimizer, lamb = 0.001, max_epochs = 100, early_stop = None, device = device):
+def train_model(train_iter, valid_iter, net, loss, optimizer, lamb = 0.001, max_epochs = 100, adjust_lr = None, 
+                early_stop = None, device = device):
     net = net.to(device)
     print("training on ", device)
     for epoch in range(max_epochs):
@@ -96,6 +97,9 @@ def train_model(train_iter, valid_iter, net, loss, optimizer, lamb = 0.001, max_
         
         print('epoch %d, train loss %.4f (acc %.6f), valid loss %.4f (acc %.6f), time %.1f sec'
               % (epoch, train_loss, train_acc, valid_loss, valid_acc, time.time() - start))
+        
+        if (adjust_lr):
+            adjust_lr(optimizer)
         
         if (early_stop):
             if (early_stop(valid_loss, net, optimizer)):
