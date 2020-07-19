@@ -8,7 +8,7 @@ This is an illustration of PointNet, taken from Figure 2 in [1]. The max-pooling
 
 ![illustration for PointNet](figure.png)
 
-To incorporate graph convolutional  networks, I modified the three *MLP(64, 128, 1024)* s (one in the main PointNet, two in TNets) by adding GCN layers, illustrated as follows. There are also dense connections between the GCN layers, combining features at different levels. To compare their performances, their output dimensions are kept identical (both are 1024). In addition, GCNs require graphs as an extra input, which are constructed by a thresholded Gaussian kernel weighting function. Hopefully the modification will endow the network with more capacity to capture structural information, and thus result in better performances.
+To incorporate graph convolutional networks, I modified the three *MLP(64, 128, 1024)* s (one in the main PointNet, two in TNets) by adding GCN layers, illustrated as follows. There are also dense connections between the GCN layers, combining features at different levels. To compare their performances, their output dimensions are kept identical (both are 1024). In addition, GCNs require graphs as an extra input, which are constructed by a thresholded Gaussian kernel weighting function. Hopefully the modification will endow the network with more capacity to capture structural information, and thus result in better performances.
 
 ![incorporating GCNs to PointNet](figure2_gcn.png)
 
@@ -16,15 +16,18 @@ To incorporate graph convolutional  networks, I modified the three *MLP(64, 128,
 
 We implement both models in *pytorch*. Codes are stored in `Models/PointNet/` and `Models/PointNet+GCN`, respectively. The dataset classes in `Models/*/data.py` are modified from https://github.com/WangYueFt/dgcnn/blob/master/pytorch/data.py. The pytorch implementation for GCN ( `Models/PointNet+GCN/layers.py` and the class `GCN` in`Models/PointNet+GCN/models.py`) are borrowed from https://github.com/tkipf/pygcn/blob/master/pygcn/layer.py. 
 
-Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix is added to the total loss. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. We test both models for *#points*=256, 512, 1024.
+Similar to [1], an regularization loss term (with weight 0.001) encouraging the 64-by-64 feature transform matrix to be close to an orthonormal matrix is added to the total loss. We use Adam optimizer, with learning rate initially set as 0.001 and decayed by 0.95 every epoch. We test both models for *n* (*#points*) = 128, 256, 512, 1024.
 
 **Results.** The results of both models are listed below.
 
-|                | PointNet |     PointNet+GCN     |
-| -------------: | :------: | :------------------: |
-|  *#points*=256 | 87.2771% |     **87.4392%**     |
-|  *#points*=512 | 87.3582% |     **87.4797%**     |
-| *#points*=1024 | 89.5057% | *(still testing...)* |
+|          |   PointNet   | PointNet+GCN |
+| -------: | :----------: | :----------: |
+|  *n*=128 |   86.7099%   | **87.6823%** |
+|  *n*=256 |   87.2771%   | **87.4392%** |
+|  *n*=512 |   87.3582%   | **87.4797%** |
+| *n*=1024 | **89.5057%** |   88.5332%   |
+
+The overall accuracy over 40 classes of PointNet is comparable to the official results given by [1]. The GCN version performs slightly better than PointNet when *n*=128, 256, 512, but worse when *n*=1024. Noting than the relationships between the points are important especially when *n* is small,  the results indicate that graph convolution layers probably play a role in capturing structural information. However, we have to admit that when *n* is large, the training of GCNs become really inefficient, and it is still possible that delicate hyper-parameter tuning may result in better accuracies and lead to more evident conclusions.
 
 ## How to Use
 
@@ -43,11 +46,11 @@ cd Models/"PointNet+GCN"
 Run
 
 ```shell
-python train.py -lr=1e-3 -n=512 --model=PointNet.pt
+python train.py -lr=1e-3 -n=1024 --model=PointNet.pt
 ```
 
 ```shell
-python train.py -lr=1e-3 -n=512 --model=PointNetGCN.pt
+python train.py -lr=1e-3 -n=1024 --model=PointNetGCN.pt
 ```
 
 for training. The ModelNet40 dataset will be automatically downloaded (you can also download it manually from https://shapenet.cs.stanford.edu/media/modelnet40_ply_hdf5_2048.zip , and unzip the file to `./Datasets/` directory). 
@@ -59,11 +62,11 @@ The trained model will be stored in `PointNet.pt` or `PointNetGCN.pt`.
 Run
 
 ```shell
-python test.py -n=512 --model=PointNet.pt
+python test.py -n=1024 --model=PointNet.pt
 ```
 
 ```shell
-python test.py -n=512 --model=PointNetGCN.pt
+python test.py -n=1024 --model=PointNetGCN.pt
 ```
 
 for testing the trained model (loaded from `PointNet.pt` or `PointNetGCN.pt`).
@@ -72,7 +75,8 @@ for testing the trained model (loaded from `PointNet.pt` or `PointNetGCN.pt`).
 
 If you want to use our pretrained models, please download them from the following links:
 
-*I would upload them later.*
+- [PointNet-1024-0.895057.pt](https://drive.google.com/file/d/1DZScuI8EBSEncbak2cKfdO5fPCWL_FS0/view?usp=sharing) (40M)
+- [PointNetGCN-1024-0.885332.pt](https://drive.google.com/file/d/1UAaD92bVls9NIp0QOepBvQlLNpdTxcb1/view?usp=sharing)  (48M)
 
 Please save the `*.pt`  files in `Models/"PointNet"` and `Models/"PointNet+GCN"`, rename them as `PointNet.pt` and `PointNetGCN.pt`, respectively, and run the previous testing command.
 
